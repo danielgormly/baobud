@@ -12,7 +12,7 @@ Generate [OpenBao](https://openbao.org/)/[Vault](https://www.hashicorp.com/produ
 {{ end }}
 ```
 
-### Command examples
+### Usage
 ```bash
 # Create policy & write to stdout
 baobud template.ctmpl
@@ -22,9 +22,6 @@ baobud template.ctmpl
 
 # Create policy & write to file
 baobud template.ctmpl -o policy.hcl
-> path "secret/prod/example" {
->   capabilities = ["read"]
-> }
 ```
 
 ## Other commands
