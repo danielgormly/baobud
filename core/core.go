@@ -25,13 +25,6 @@ func DefaultTemplate(content string) (*template.Template, error) {
 	return tmpl, nil
 }
 
-// TemplateAnalyzer handles static analysis of consul-templates
-// type TemplateAnalyzer struct {
-// 	Parser    *template.Template
-// 	VaultRefs []VaultAccess
-// 	// variables map[string]cty.Value
-// }
-
 // Analyze performs static analysis on template content
 func Analyze(content string) ([]string, error) {
 	// Parse template using consul-template's parser
@@ -70,12 +63,10 @@ func CreateVaultPolicy(paths []string) string {
 
 	for _, path := range paths {
 		// Add the path with read capabilities
-		policyBuilder.WriteString(fmt.Sprintf(`
-path "%s" {
+		policyBuilder.WriteString(fmt.Sprintf(`path "%s" {
     capabilities = ["read"]
 }
 `, path))
 	}
-
 	return policyBuilder.String()
 }

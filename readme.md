@@ -4,7 +4,7 @@ Generate [OpenBao](https://openbao.org/)/[Vault](https://www.hashicorp.com/produ
 
 ## Usage example
 
-*input: template.toml.tmpl*
+**input: template.toml.tmpl**
 ```
 {{ with secret "secret/prod/example" }}
   EXAMPLE_SECRET: {{ .Data.EXAMPLE_SECRET }}
@@ -12,16 +12,19 @@ Generate [OpenBao](https://openbao.org/)/[Vault](https://www.hashicorp.com/produ
 {{ end }}
 ```
 
+### Command examples
 ```bash
-baobud template.ctmpl > policy.hcl
-#> path "secret/data/prod/example" {
-#>   capabilities = ["read"]
-#> }
-# All secret engines assume v2 secret engine unless v1 path(s) are matched. Note you can use multiple --v1-prefix arguments
-baobud --v1-prefix="secret" template.ctmpl > policy.hcl
-#> path "secret/prod/example" {
-#>   capabilities = ["read"]
-#> }
+# Create policy & write to stdout
+baobud template.ctmpl
+> path "secret/prod/example" {
+>   capabilities = ["read"]
+> }
+
+# Create policy & write to file
+baobud template.ctmpl -o policy.hcl
+> path "secret/prod/example" {
+>   capabilities = ["read"]
+> }
 ```
 
 ## Other commands
@@ -30,12 +33,20 @@ baobud version # prints version
 baobud help # prints help info
 ```
 
-## Installation (MacOS)
+## Installation (MacOS ARM)
 ```
+curl baobud
+chmod +x baobud
+mv baobud /usr/bin/local
+baobud version
 ```
 
 ## Installation (Linux)
 ```
+curl baobud
+chmod +x baobud
+mv baobud /usr/bin
+baobud version
 ```
 
 ## Development

@@ -8,7 +8,7 @@ import (
 )
 
 const VERSION = "prealpha-2024-11-05"
-const DEBUG = true
+const DEBUG = false
 
 func printVersion() {
 	fmt.Printf("baobud %s (https://github.com/danielgormly/baobud)\n", VERSION)
@@ -27,29 +27,29 @@ baobud version              Show the version
 baobud help                 Show this help message`)
 	}
 	debugPrint("OS args %v", os.Args[0])
-	if len(os.Args) < 2 {
-		flag.Usage()
-		os.Exit(1)
-	}
-	fileCmd := flag.NewFlagSet("baobud", flag.ExitOnError)
-	filePath := fileCmd.String("f", "", "Path to template file")
 
-	switch os.Args[1] {
-	case "-f":
-		fileCmd.Parse(os.Args[1:])
-		if *filePath == "" {
-			fmt.Println("Error: -f requires a file argument")
-			os.Exit(1)
-		}
-		handleFile(*filePath)
-	case "version":
+	filePath := flag.String("f", "", "Path to template file")
+	outputPath := flag.String("o", "", "Output file (optional)")
+	flag.Parse()
+
+	switch {
+	case os.Args[1] == "version":
 		printVersion()
-	case "help":
+	case os.Args[1] == "help":
 		flag.Usage()
 	default:
-		fmt.Printf("Unknown command: %s\n", os.Args[1])
-		flag.Usage()
-		os.Exit(1)
+		if *filePath == "" {
+			fmt.Println("Error: -f flag is required")
+			flag.Usage()
+			os.Exit(1)
+		}
+		fmt.Println(*outputPath)
+		policy := generatePolicy(*filePath)
+		if *outputPath != "" {
+			writeFile(policy, *outputPath)
+		} else {
+			fmt.Println(policy)
+		}
 	}
 }
 
@@ -59,7 +59,7 @@ func debugPrint(format string, a ...any) {
 	}
 }
 
-func handleFile(filePath string) {
+func generatePolicy(filePath string) string {
 	debugPrint("Processing file \"%s\"", filePath)
 	file := readFile(filePath)
 	deps, err := core.Analyze(string(file))
@@ -68,5 +68,5 @@ func handleFile(filePath string) {
 		os.Exit(1)
 	}
 	policy := core.CreateVaultPolicy(deps)
-	fmt.Println(policy)
+	return policy
 }
