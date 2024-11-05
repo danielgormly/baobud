@@ -1,0 +1,6 @@
+TEST = 'data'
+{{ with secret "secret/prod/example" }}
+EXAMPLE_SECRET = {{ .Data.EXAMPLE_SECRET }}
+EXAMPLE_CONFIG = {{ .Data.EXAMPLE_CONFIG }}
+{{ end }}
+{{ with secret "secret/prod/test" }} TEST_CONFIG = {{ .Data.TEST_CONFIG }} {{ end }}
