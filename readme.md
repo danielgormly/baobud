@@ -5,6 +5,7 @@ Generate [OpenBao](https://openbao.org/)/[Vault](https://www.hashicorp.com/produ
 ## Limitations & Caveats
 - Baobud does not support evaluating Consul nor Nomad requests.
 - This is currently built with the Consul Template SDK, that uses the Vault SDK. If OpenBao/Vault API diverges, this will break for OpenBao.
+- Incorrect auth will give you an ugly runtime error.
 
 ## Usage example
 

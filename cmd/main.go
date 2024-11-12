@@ -22,7 +22,7 @@ func main() {
 Creates OpenBao/Vault policies from Consul Template templates. Respects BAO_TOKEN & BAO_ADDR environment variables. N.b. Consul & Nomad requests are not currently supported. PRs welcome.
 
 Main command:
-baobud <template file>: Generates policy to stdout
+baobud <flags> <template file>: Generates policy to stdout
 
 Flags:
 -o <output file path>: Generates policy to specified file path
@@ -37,28 +37,29 @@ baobud help: Show this help message`)
 	debugPrint("OS args %v", os.Args[0])
 
 	debugFlag := flag.Bool("d", false, "Debug mode (optional)")
-	if *debugFlag {
-		DEBUG = true
-		debugPrint("Debug mode enabled")
-	}
 	outputPath := flag.String("o", "", "Output file (optional)")
 	baoAddr := flag.String("bao-addr", "", "Output file (optional)")
 	baoToken := flag.String("bao-token", "", "Output file (optional)")
 	flag.Parse()
+	args := flag.Args()
 
-	if len(os.Args) <= 1 {
+	if *debugFlag {
+		DEBUG = true
+		debugPrint("Debug mode enabled")
+	}
+
+	if len(os.Args) == 0 {
+		flag.Usage()
 		os.Exit(1)
 	}
 
-	switch {
-	case len(os.Args) <= 1:
-		flag.Usage()
-	case os.Args[1] == "version":
+	switch args[0] {
+	case "version":
 		printVersion()
-	case os.Args[1] == "help":
+	case "help":
 		flag.Usage()
 	default:
-		policy := generatePolicy(os.Args[1], core.BaobudConfig{
+		config := core.BaobudConfig{
 			BaoAddress: func() string {
 				if *baoAddr == "" {
 					return os.Getenv("BAO_ADDR")
@@ -66,12 +67,13 @@ baobud help: Show this help message`)
 				return *baoAddr
 			}(),
 			BaoToken: func() string {
-				if *baoAddr == "" {
+				if *baoToken == "" {
 					return os.Getenv("BAO_TOKEN")
 				}
 				return *baoToken
 			}(),
-		})
+		}
+		policy := generatePolicy(args[0], config)
 		if *outputPath != "" {
 			fmt.Printf("Writing policy to %s\n", *outputPath)
 			writeFile(policy, *outputPath)
