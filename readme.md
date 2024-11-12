@@ -1,9 +1,9 @@
 # Baobud
 
-Generate [OpenBao](https://openbao.org/)/[Vault](https://www.hashicorp.com/products/vault) policies from [Consul Template](https://github.com/hashicorp/consul-template) templates. Baobud is not a static tool so will
+Generate [OpenBao](https://openbao.org/)/[Vault](https://www.hashicorp.com/products/vault) policies from [Consul Template](https://github.com/hashicorp/consul-template) templates. Baobud dynamically evaluates the template to determine all Vault requests.
 
 ## Limitations & Caveats
-- Baobud does not support Consul.
+- Baobud does not support evaluating Consul nor Nomad requests.
 - This is currently built with the Consul Template SDK, that uses the Vault SDK. If OpenBao/Vault API diverges, this will break for OpenBao.
 
 ## Usage example
@@ -20,9 +20,9 @@ Generate [OpenBao](https://openbao.org/)/[Vault](https://www.hashicorp.com/produ
 ```bash
 # Create policy & write to stdout
 baobud -f template.ctmpl
-> path "secret/prod/example" {
->   capabilities = ["read"]
-> }
+# path "secret/prod/example" {
+#  capabilities = ["read"]
+# }
 
 # Create policy & write to file
 baobud -f template.ctmpl -o policy.hcl

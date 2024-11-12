@@ -12,6 +12,11 @@ import (
 	"github.com/hashicorp/consul-template/template"
 )
 
+type BaobudConfig struct {
+	BaoAddress string
+	BaoToken   string
+}
+
 func DefaultTemplate(content string) (*template.Template, error) {
 	tmplInput := &template.NewTemplateInput{
 		Destination:   "",
@@ -29,14 +34,14 @@ func DefaultTemplate(content string) (*template.Template, error) {
 }
 
 // Analyze performs static analysis on template content
-func Analyze(content string) ([]string, error) {
+func Analyze(content string, config BaobudConfig) ([]string, error) {
 	logging.Setup(&logging.Config{
 		Level: "WARN",
 	})
 	clients := dependency.NewClientSet()
 	clients.CreateVaultClient((&dependency.CreateVaultClientInput{
-		Address: "http://127.0.0.1:8200",
-		Token:   "dev",
+		Address: config.BaoAddress,
+		Token:   config.BaoToken,
 	}))
 	opts := &dependency.QueryOptions{
 		// Set any required options
