@@ -1,0 +1,2 @@
+{{- with secret "sys/auth" }}
+{{- end }}

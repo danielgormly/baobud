@@ -5,5 +5,9 @@ clean:
 dev:
 	go run ./cmd -f test/template.ctmpl -o policy.hcl
 test-binary:
-	./bin/baobud version
-	./bin/baobud -f test/template.ctmpl
+	bao server -dev & \
+	VAULT_PID=$$! && \
+	sleep 2 && \
+	./bin/baobud version && \
+	./bin/baobud -f test/template.ctmpl && \
+	kill $$VAULT_PID

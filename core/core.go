@@ -5,7 +5,10 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"time"
 
+	"github.com/hashicorp/consul-template/dependency"
+	"github.com/hashicorp/consul-template/logging"
 	"github.com/hashicorp/consul-template/template"
 )
 
@@ -27,30 +30,60 @@ func DefaultTemplate(content string) (*template.Template, error) {
 
 // Analyze performs static analysis on template content
 func Analyze(content string) ([]string, error) {
-	// Parse template using consul-template's parser
-	tmpl, err := DefaultTemplate(content)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error constructing template: %v", err)
-		os.Exit(1)
+	logging.Setup(&logging.Config{
+		Level: "WARN",
+	})
+	clients := dependency.NewClientSet()
+	clients.CreateVaultClient((&dependency.CreateVaultClientInput{
+		Address: "http://127.0.0.1:8200",
+		Token:   "dev",
+	}))
+	opts := &dependency.QueryOptions{
+		// Set any required options
+		WaitIndex:  0,
+		WaitTime:   time.Second * 10,
+		AllowStale: false,
 	}
 
+	brain := template.NewBrain()
 	executeInput := template.ExecuteInput{
-		Brain: template.NewBrain(),
+		Brain: brain,
 	}
-	executed, err := tmpl.Execute(&executeInput)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error executing template: %v", err)
-		os.Exit(1)
-	}
-
 	vaultPaths := make(map[string]bool)
-	for _, dep := range executed.Used.List() {
-		if dep.Type() == 1 {
-			if matched := regexp.MustCompile(`(?:vault\.read\()([^)]+)(?:\))`).FindStringSubmatch(dep.String()); matched != nil {
-				vaultPaths[matched[1]] = true
+
+	// Loop through execution of template after each
+	// set of Vault paths are discovered
+	for {
+		// Parse template using consul-template's parser
+		tmpl, err := DefaultTemplate(content)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error constructing template: %v", err)
+			os.Exit(1)
+		}
+		executed, err := tmpl.Execute(&executeInput)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error executing template: %v", err)
+			os.Exit(1)
+		}
+
+		for _, dep := range executed.Missing.List() {
+			if dep.Type() == 1 {
+				result, _, err := dep.Fetch(clients, opts)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "Error fetching: %v\n", err)
+					os.Exit(1)
+				}
+				brain.Remember(dep, result)
+				if matched := regexp.MustCompile(`(?:vault\.read\()([^)]+)(?:\))`).FindStringSubmatch(dep.String()); matched != nil {
+					vaultPaths[matched[1]] = true
+				}
 			}
 		}
+		if executed.Missing.Len() == 0 {
+			break
+		}
 	}
+
 	paths := make([]string, 0, len(vaultPaths))
 	for path := range vaultPaths {
 		paths = append(paths, path)

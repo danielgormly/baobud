@@ -1,0 +1,7 @@
+{{ with secret "kv2/app" }}
+  App Name: {{ .Data.data.name }}
+  {{ with secret (printf "kv2/env/%s" .Data.data.environment) }}
+    Environment: {{ .Data.data.type }}
+    Config: {{ .Data.data.config }}
+  {{ end }}
+{{ end }}

@@ -8,7 +8,8 @@ import (
 )
 
 const VERSION = "prealpha-2024-11-05"
-const DEBUG = false
+
+var DEBUG = os.Getenv("BAOBUD_DEBUG") == "true"
 
 func printVersion() {
 	fmt.Printf("baobud %s (https://github.com/danielgormly/baobud)\n", VERSION)
@@ -18,13 +19,20 @@ func main() {
 	// TODO: Accept stdout input
 	flag.Usage = func() {
 		fmt.Println(`Usage: baobud -f <file>
-Creates OpenBao/Vault policies from Consul Template templates
+Creates OpenBao/Vault policies after evaluating Consul Template templates. Respects BAO_TOKEN & BAO_ADDR environment variables. N.b. Only Vault (and OpenBao) requests are evaluated.
 
-Commands:
-baobud -f <template file>   Generate policy to stdout
-baobud -f <template file> -o <output file>   Generate policy to file
-baobud version              Show the version
-baobud help                 Show this help message`)
+Main command:
+baobud <template file>: Generates policy to stdout
+
+Flags:
+-o <output file path>: Generates policy to specified file path
+-bao-addr <URL>: Address to OpenBao or Vault server
+-bao-token <Token>: OpenBao Address or Token
+-d: Debug mode (note this may not produce valid hcl in stdout mode)
+
+Other Commands:
+baobud version: Show the version
+baobud help: Show this help message`)
 	}
 	debugPrint("OS args %v", os.Args[0])
 
@@ -32,7 +40,13 @@ baobud help                 Show this help message`)
 	outputPath := flag.String("o", "", "Output file (optional)")
 	flag.Parse()
 
+	if len(os.Args) <= 1 {
+		os.Exit(1)
+	}
+
 	switch {
+	case len(os.Args) <= 1:
+		flag.Usage()
 	case os.Args[1] == "version":
 		printVersion()
 	case os.Args[1] == "help":
@@ -43,9 +57,9 @@ baobud help                 Show this help message`)
 			flag.Usage()
 			os.Exit(1)
 		}
-		fmt.Println(*outputPath)
 		policy := generatePolicy(*filePath)
 		if *outputPath != "" {
+			fmt.Printf("Writing policy to %s\n", *outputPath)
 			writeFile(policy, *outputPath)
 		} else {
 			fmt.Println(policy)
