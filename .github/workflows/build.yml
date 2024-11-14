@@ -73,11 +73,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: artifacts
-
+      - name: Create bin directory
+        run: |
+          mkdir -p bin
+          ls -lha
       - name: Prepare artifacts for release
         run: |
           cd bin
-          chmod +x */baobud-*
+          chmod +x artifacts/*/baobud-*
           for dir in */; do
             mv "$dir"/* ../bin/
 
