@@ -79,10 +79,9 @@ jobs:
           ls -lha
       - name: Prepare artifacts for release
         run: |
-          cd bin
           chmod +x artifacts/*/baobud-*
-          for dir in */; do
-            mv "$dir"/* ../bin/
+          for dir in artifacts/*/; do
+            mv "$dir"/* bin/
 
       - name: Generate checksums
         run: |
