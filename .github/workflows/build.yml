@@ -83,6 +83,7 @@ jobs:
           chmod +x artifacts/*/baobud-*
           for dir in artifacts/*/; do
             mv "$dir"/* bin/
+          done
 
       - name: Generate checksums
         run: |

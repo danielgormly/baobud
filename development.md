@@ -13,6 +13,8 @@ consul-template -template="template.ctmpl" -vault-addr="http://127.0.0.1:8200" \
 ## TODO
 - Test binary in CI
 
-## Release
+## CI commands
+brew install act
+act --container-architecture linux/amd64
 git tag v0.0.1
 git push origin v0.0.1
