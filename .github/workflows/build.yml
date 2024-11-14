@@ -32,7 +32,7 @@ jobs:
 
       - name: Install OpenBao
         run: |
-          curl -Lo openbao.tar.gz https://github.com/openbao/openbao/releases/download/v2.0.2/bao_2.0.2_${{ matrix.platform_cap }}_${{ matrix.arch }}.tar.gz
+          curl -Lo openabo.tar.gz https://github.com/openbao/openbao/releases/download/v2.0.1/bao_2.0.1_${{ matrix.platform_cap }}_${{ matrix.arch }}.tar.gz
           tar xzf openbao.tar.gz
           sudo mv bao /usr/local/bin/
           rm openbao.tar.gz
