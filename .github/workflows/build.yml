@@ -59,7 +59,7 @@ jobs:
           go build -ldflags="-s -w" -o bin/baobud-${{ matrix.platform }}-${{ matrix.arch }} cmd/main.go
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: baobud-${{ matrix.platform }}-${{ matrix.arch }}
           path: bin/baobud-${{ matrix.platform }}-${{ matrix.arch }}
@@ -72,16 +72,14 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v3
         with:
-          path: bin
+          path: artifacts
 
       - name: Prepare artifacts for release
         run: |
           cd bin
           chmod +x */baobud-*
-          mv baobud-linux-amd64/baobud-linux-amd64 ./
-          mv baobud-linux-arm64/baobud-linux-arm64 ./
-          mv baobud-darwin-amd64/baobud-darwin-amd64 ./
-          mv baobud-darwin-arm64/baobud-darwin-arm64 ./
+          for dir in */; do
+            mv "$dir"/* ../bin/
 
       - name: Generate checksums
         run: |
@@ -93,9 +91,6 @@ jobs:
         with:
           files: |
             bin/baobud-linux-amd64
-            bin/baobud-linux-arm64
-            bin/baobud-darwin-amd64
-            bin/baobud-darwin-arm64
             bin/checksums.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

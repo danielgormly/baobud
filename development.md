@@ -10,6 +10,9 @@ consul-template -template="template.ctmpl" -vault-addr="http://127.0.0.1:8200" \
     -vault-token="dev" -vault-renew-token=false -once -dry
 ```
 
+## TODO
+- Test binary in CI
+
 ## Release
 git tag v0.0.1
 git push origin v0.0.1
