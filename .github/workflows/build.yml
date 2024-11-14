@@ -63,6 +63,7 @@ jobs:
         with:
           name: baobud-${{ matrix.platform }}-${{ matrix.arch }}
           path: bin/baobud-${{ matrix.platform }}-${{ matrix.arch }}
+          retention-days: 1
 
   release:
     needs: build-and-test
@@ -70,13 +71,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
       - name: Create bin directory
         run: |
           mkdir -p bin
-          ls -lha
+          ls -R
       - name: Prepare artifacts for release
         run: |
           chmod +x artifacts/*/baobud-*
