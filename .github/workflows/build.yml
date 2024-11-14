@@ -14,17 +14,15 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            platform: Linux
-            platform_cap: Linux
+            platform: linux
             arch: amd64
             bao_url: https://github.com/openbao/openbao/releases/download/v2.0.1/bao_2.0.1_linux_amd64.deb
           # - os: ubuntu-latest
-          #   platform: Linux
-          #   platform_cap: Linux
+          #   platform: linux
           #   arch: arm64
           #   bao_url: https://github.com/openbao/openbao/releases/download/v2.0.1/bao_2.0.1_linux_arm64.deb
           # - os: macos-latest
-          #   platform: Darwin
+          #   platform: darwin
           #   arch: arm64
           #   bao_url: https://github.com/openbao/openbao/releases/download/v2.0.1/bao_2.0.1_Darwin_arm64.tar.gz
     runs-on: ${{ matrix.os }}
