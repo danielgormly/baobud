@@ -50,28 +50,3 @@ chmod +x baobud
 mv baobud /usr/bin
 baobud version
 ```
-
-## Development
-```bash
-# Nested dynamic key test!
-bao server -dev -dev-root-token-id=dev
-export BAO_ADDR='http://127.0.0.1:8200'
-export BAO_TOKEN='dev'
-bao secrets enable -path=kv2 -version=2 kv
-
-# Nested example
-bao kv put kv2/app name="myapp" environment="prod"
-bao kv put kv2/env/prod type="production" config="debug=false"
-consul-template -template="nested.ctmpl" -vault-addr="http://127.0.0.1:8200" -vault-token="dev" -vault-renew-token=false -once -dry
-baobud kv
-
-export BAOBUD_DEBUG=1 # see debug info
-go run ./cmd -f ./test/nested.ctmpl # compile template
-make build # build
-
-## Dynamic test (TODO: Encapsulate)
-TEST_DYNAMIC=yo go run ./cmd -f ./test/dynamic.ctmpl
-
-## Nested
-consul-template -template="ultra.ctmpl" -vault-addr="http://127.0.0.1:8200" -vault-token="s.JQLssCtAbBiJkDe0q2HyL6v0" -vault-renew-token=false -once -dr
-```

@@ -76,7 +76,7 @@ baobud help: Show this help message`)
 		policy := generatePolicy(args[0], config)
 		if *outputPath != "" {
 			fmt.Printf("Writing policy to %s\n", *outputPath)
-			writeFile(policy, *outputPath)
+			core.WriteFile(policy, *outputPath)
 		} else {
 			fmt.Println(policy)
 		}
@@ -91,7 +91,7 @@ func debugPrint(format string, a ...any) {
 
 func generatePolicy(filePath string, config core.BaobudConfig) string {
 	debugPrint("Processing file \"%s\"", filePath)
-	file := readFile(filePath)
+	file := core.ReadFile(filePath)
 	deps, err := core.Analyze(string(file), config)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error executing template: %v\n", err)

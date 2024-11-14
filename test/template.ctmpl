@@ -1,6 +1,6 @@
 TEST = "data"
-{{ with secret "secret/prod/data/example" }}
-EXAMPLE_SECRET = "{{ .Data.EXAMPLE_SECRET }}"
-EXAMPLE_CONFIG = "{{ .Data.EXAMPLE_CONFIG }}"
+{{ with secret "kv2/test" }}
+EXAMPLE_SECRET = "{{ .Data.data.foo }}"
+EXAMPLE_CONFIG = "{{ .Data.data.bar }}"
 {{ end }}
-{{ with secret "secret/prod/test" }} TEST_CONFIG = "{{ .Data.TEST_CONFIG }}" {{ end }}
+{{ with secret "kv2/test" }} TEST_CONFIG = "{{ .Data.data.foo }}" {{ end }}

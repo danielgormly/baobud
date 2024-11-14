@@ -6,11 +6,15 @@ clean:
 	rm -rf bin/
 dev:
 	go run ./cmd -f test/template.ctmpl
-# TODO: Don't bother with Vault (?)
+start-bao:
+	bao server -dev -dev-root-token-id=dev > ./bao.log 2>&1 & echo $$! > vault.pid
+	sleep 2
+stop-bao:
+	@if [ -f vault.pid ]; then \
+		kill `cat vault.pid` > /dev/null 2>&1 || true; \
+		rm vault.pid; \
+	fi
 test-binary:
-	bao server -dev & \
-	VAULT_PID=$$! && \
-	sleep 2 && \
 	./bin/baobud version && \
 	./bin/baobud -f test/template.ctmpl && \
 	kill $$VAULT_PID

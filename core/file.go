@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"flag"
@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-func readFile(filePath string) []byte {
+func ReadFile(filePath string) []byte {
 	if filePath == "" {
 		flag.Usage()
 		os.Exit(1)
@@ -16,7 +16,6 @@ func readFile(filePath string) []byte {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error resolving path: %v\n", err)
 	}
-	debugPrint("Resolved file %s", absPath)
 	fileInfo, err := os.Stat(absPath)
 	// Test if file can be accessed
 	if err != nil {
@@ -40,7 +39,7 @@ func readFile(filePath string) []byte {
 	return content
 }
 
-func writeFile(content string, filePath string) {
+func WriteFile(content string, filePath string) {
 	if filePath == "" {
 		flag.Usage()
 		os.Exit(1)
@@ -50,7 +49,6 @@ func writeFile(content string, filePath string) {
 		fmt.Fprintf(os.Stderr, "Error resolving path: %v\n", err)
 		os.Exit(1)
 	}
-	debugPrint("Writing to file %s", absPath)
 	err = os.WriteFile(absPath, []byte(content), 0644)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing file: %v\n", err)
