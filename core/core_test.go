@@ -129,7 +129,7 @@ func TestAnalyze(t *testing.T) {
 		"foo": "bar",
 		"bar": "foo",
 	})
-	file := ReadFile("/Users/daniel/repos/baobud/test/template.ctmpl")
+	file := ReadFile("../test/template.ctmpl")
 	evaluated, err := Analyze(string(file), *baobudConfig)
 	if err != nil {
 		log.Fatalf("Failed to evaluate %v", err)
