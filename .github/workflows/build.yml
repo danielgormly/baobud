@@ -23,7 +23,7 @@ jobs:
           - os: ubuntu-latest
             platform: linux
             arch: arm64
-            bao_url: https://github.com/openbao/openbao/releases/download/v2.0.1/bao_2.0.1_linux_arm64.deb
+            bao_url: https://github.com/openbao/openbao/releases/download/v2.0.1/bao_2.0.1_linux_amd64.deb
             setup_qemu: true
           - os: macos-latest
             platform: darwin
@@ -32,10 +32,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-
-      - name: Set up QEMU
-        if: matrix.setup_qemu
-        uses: docker/setup-qemu-action@v3
 
       - name: Set up Go
         uses: actions/setup-go@v4
