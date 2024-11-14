@@ -1,5 +1,7 @@
 # Baobud
 
+[![Release Baobud](https://github.com/danielgormly/baobud/actions/workflows/build.yml/badge.svg)](https://github.com/danielgormly/baobud/actions/workflows/build.yml)
+
 Generate [OpenBao](https://openbao.org/)/[Vault](https://www.hashicorp.com/products/vault) policies from [Consul Template](https://github.com/hashicorp/consul-template) templates. Baobud dynamically evaluates the template to determine all Vault requests.
 
 ## Limitations & Caveats
@@ -35,18 +37,14 @@ baobud version # prints version
 baobud help # prints help info
 ```
 
-## Installation (MacOS ARM)
-```
-curl baobud
+## Installation
+```bash
+# Linux
+curl -Lo baobud https://github.com/danielgormly/baobud/releases/download/v0.0.1-alpha-11/baobud-linux-amd64
+# MacOS (ARM-based)
+curl -Lo baobud https://github.com/danielgormly/baobud/releases/download/v0.0.1-alpha-11/baobud-darwin-arm64
+# Install
 chmod +x baobud
-mv baobud /usr/bin/local
-baobud version
-```
-
-## Installation (Linux)
-```
-curl baobud
-chmod +x baobud
-mv baobud /usr/bin
+mv baobud /usr/local/bin/
 baobud version
 ```
