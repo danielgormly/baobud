@@ -56,7 +56,7 @@ jobs:
           GOOS: ${{ matrix.platform }}
         run: |
           mkdir -p bin
-          go build -ldflags="-s -w" -o bin/baobud-${{ matrix.platform }}-${{ matrix.arch }} cmd/main.go cmd/file.go
+          go build -ldflags="-s -w" -o bin/baobud-${{ matrix.platform }}-${{ matrix.arch }} cmd/main.go
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3

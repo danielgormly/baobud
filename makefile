@@ -1,7 +1,7 @@
 .PHONY: test
 
 build:
-	go build -ldflags="-s -w" -o bin/baobud cmd/main.go cmd/file.go
+	go build -ldflags="-s -w" -o bin/baobud cmd/main.go
 clean:
 	rm -rf bin/
 dev:
