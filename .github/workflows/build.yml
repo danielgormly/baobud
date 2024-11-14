@@ -12,15 +12,21 @@ jobs:
   build-and-test:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        arch: [amd64, arm64]
         include:
           - os: ubuntu-latest
             platform: Linux
             platform_cap: Linux
-          - os: macos-latest
-            platform: Darwin
-            platform_cap: Darwin
+            arch: amd64
+            bao_url: https://github.com/openbao/openbao/releases/download/v2.0.1/bao_2.0.0_linux_amd64.deb
+          # - os: ubuntu-latest
+          #   platform: Linux
+          #   platform_cap: Linux
+          #   arch: arm64
+          #   bao_url: https://github.com/openbao/openbao/releases/download/v2.0.1/bao_2.0.0_linux_amd64.deb
+          # - os: macos-latest
+          #   platform: Darwin
+          #   arch: arm64
+          #   bao_url: https://github.com/openbao/openbao/releases/download/v2.0.1/bao_2.0.1_Darwin_arm64.tar.gz
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -32,10 +38,16 @@ jobs:
 
       - name: Install OpenBao
         run: |
-          curl -Lo openabo.tar.gz https://github.com/openbao/openbao/releases/download/v2.0.1/bao_2.0.1_${{ matrix.platform_cap }}_${{ matrix.arch }}.tar.gz
-          tar xzf openbao.tar.gz
-          sudo mv bao /usr/local/bin/
-          rm openbao.tar.gz
+          if [[ "${{ matrix.bao_url }}" == *.deb ]]; then
+            curl -Lo openbao.deb ${{ matrix.bao_url }}
+            sudo dpkg -i openbao.deb
+            rm openbao.deb
+          else
+            curl -Lo openbao.tar.gz ${{ matrix.bao_url }}
+            tar xzf openbao.tar.gz
+            sudo mv bao /usr/local/bin/
+            rm openbao.tar.gz
+          fi
 
       - name: Run tests
         run: make test
